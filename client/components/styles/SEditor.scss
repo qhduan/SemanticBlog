@@ -1,27 +1,24 @@
 
-#SEditor {
-    padding: 10px;
-    .toolbar-padding {
-        height: 60px;
+.SEditor {
+    .property {
+        color: red;
     }
-    table {
-        padding: 5px;
-        border-spacing: 0;
-        border-collapse: collapse;
-        thead {
-            th {
-                border: 1px solid #ccc;
-                padding: 6px 4px;
-            }
-        }
-        tbody {
-            tr:nth-of-type(2n+1) {
-                background-color: #f9f9f9;
-            }
-            td {
-                border: 1px solid #ccc;
-                padding: 2px 4px;
-            }
-        }
+    .editable {
+        border: 1px solid #ccc;
+        min-height: 300px;
+        width: 40%;
+        display: inline-block;
+        position: absolute;
+        outline: none;
+        padding: 10px;
+    }
+    .preview {
+        border: 1px solid #ccc;
+        min-height: 300px;
+        width: 40%;
+        display: inline-block;
+        position: relative;
+        left: calc(40% + 30px);
+        padding: 10px;
     }
 }

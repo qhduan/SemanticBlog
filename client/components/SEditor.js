@@ -2,53 +2,93 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import "medium-editor/dist/css/medium-editor.css";
-import "medium-editor/dist/css/themes/default.css";
 import "./styles/SEditor.scss";
 
 export default class SEditor extends React.Component {
     constructor (props) {
         super(props);
+        this.state = {
+            content: "",
+            converted: ""
+        };
+        this.marked = null;
     }
 
     componentDidMount () {
         const {editable} = this.refs;
         if (editable) {
-            let editableNode = ReactDOM.findDOMNode(editable);
-            require.ensure(["medium-editor", "./SEditorTable.js"], () => {
-                const MediumEditor = require("medium-editor");
-                const createTableExtension = require("./SEditorTable.js");
-                const TableExtension = createTableExtension(MediumEditor);
-                this.mediumEditor = new MediumEditor(editableNode, {
-                    toolbar: {
-                        buttons: [
-                            'bold', 'italic', 'underline',
-                            'strikethrough', 'quote', 'anchor',
-                            'image', 'justifyLeft', 'justifyCenter',
-                            'justifyRight', 'justifyFull', 'superscript',
-                            'subscript', 'orderedlist', 'unorderedlist',
-                            'pre', 'outdent', 'indent',
-                            'h2', 'h3', 'table'
-                        ],
-                        sticky: true,
-                        static: true,
-                        align: "left",
-                        updateOnEmptySelection: true
-                    },
-                    extensions: {
-                        'table': new TableExtension(),
-                    }
+            require.ensure(["marked"], () => {
+                let marked = require("marked");
+                let renderer = new marked.Renderer();
+                this.properties = {};
+                renderer.paragraph = (text) => {
+                    text = text.replace(/\[\[([^:]+)::([^\]]+)\]\]/, (match, key, value) => {
+                        this.properties[key] = value;
+                        return `<span class="property" title="${key}">${value}</span>`;
+                    });
+                    // console.log(this.properties);
+                    return `<p>${text}</p>`
+                };
+                const old_code = renderer.code.bind(renderer);
+                renderer.code = (code, language) => {
+                    console.log("code", code, language);
+                    return old_code(code, language);
+                };
+                const old_codespan = renderer.codespan.bind(renderer);
+                renderer.codespan = (code) => {
+                    console.log("codespan", code);
+                    return old_codespan(code);
+                };
+                marked.setOptions({
+                    renderer,
+                    gfm: true,
+                    tables: true,
+                    breaks: true,
+                    pedantic: true,
+                    sanitize: true,
+                    smartLists: true,
+                    smartypants: true
                 });
+                this.marked = marked;
+                this.convert();
             });
         }
     }
 
+    convert (content) {
+        if (typeof content === "undefined") {
+            content = this.state.content;
+        }
+        let converted = content;
+        if (this.marked) {
+            converted = this.marked(converted);
+        }
+        this.setState({converted});
+    }
+
+    editableChanged (event) {
+        let content = event.target.value;
+        this.setState({content});
+        this.convert(content);
+    }
+
     render () {
+        const {converted} = this.state;
         return (
-            <div id="SEditor">
-                <h1>editor</h1>
-                <div className="toolbar-padding"></div>
-                <div ref="editable" className="editable">
+            <div className="SEditor">
+                <h1>Semantic Editor</h1>
+                <div className="container">
+                    <textarea
+                        ref="editable"
+                        className="editable"
+                        onKeyDown={(...a) => this.editableChanged(...a)}
+                        onKeyUp={(...a) => this.editableChanged(...a)}
+                    ></textarea>
+                    <div
+                        ref="preview"
+                        className="preview"
+                        dangerouslySetInnerHTML={{__html: converted}}
+                    ></div>
                 </div>
             </div>
         );
