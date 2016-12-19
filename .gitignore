@@ -1,0 +1,4 @@
+node_modules
+config/server.json
+*.pyc
+npm-debug.log
