@@ -1,24 +1,27 @@
 
 .SEditor {
-    .property {
-        color: red;
+    .toolbar {
+        border: 0;
+        height: 50px;
+        .medium-editor-toolbar {
+            border-radius: 0;
+            /* 一直显示toolbar */
+            visibility: visible !important;
+            box-shadow: none;
+        }
     }
     .editable {
         border: 1px solid #ccc;
-        min-height: 300px;
-        width: 40%;
-        display: inline-block;
-        position: absolute;
+        padding: 10px;
+        padding-top: 20px;
         outline: none;
-        padding: 10px;
-    }
-    .preview {
-        border: 1px solid #ccc;
-        min-height: 300px;
-        width: 40%;
-        display: inline-block;
-        position: relative;
-        left: calc(40% + 30px);
-        padding: 10px;
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            th, td {
+                padding: 10px;
+                border: 1px solid #ccc;
+            }
+        }
     }
 }
