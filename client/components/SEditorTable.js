@@ -1,19 +1,19 @@
 
 function createTableExtension (MediumEditor) {
     return MediumEditor.extensions.anchor.extend({
-        name: 'table',
-        action: 'createTable',
-        aria: 'table',
-        tagNames: ['table'],
-        contentDefault: '<b>table</b>',
-        contentFA: '<i class="fa fa-table"></i>',
+        name: "table",
+        action: "createTable",
+        aria: "table",
+        tagNames: ["table"],
+        contentDefault: "<b>tb</b>",
+        contentFA: "<i class='fa fa-table'></i>",
 
         doFormSave: function () {
             var columnCount = this.getColumnsInput().value,
-            rowCount = this.getRowsInput().value,
-            table = this.createTable(columnCount, rowCount);
+                rowCount = this.getRowsInput().value,
+                table = this.createTable(columnCount, rowCount);
 
-            // Restore Medium Editor's selection before pasting HTML
+            // Restore Medium Editor"s selection before pasting HTML
             this.base.restoreSelection();
 
             // Paste newly created table.
@@ -25,26 +25,26 @@ function createTableExtension (MediumEditor) {
 
         createTable: function (cols, rows) {
             var doc = this.base.options.ownerDocument,
-                table = doc.createElement('table'),
-                header = doc.createElement('thead'),
-                headerRow = doc.createElement('tr'),
-                body = doc.createElement('tbody'),
-                wrap = doc.createElement('div'),
+                table = doc.createElement("table"),
+                header = doc.createElement("thead"),
+                headerRow = doc.createElement("tr"),
+                body = doc.createElement("tbody"),
+                wrap = doc.createElement("div"),
                 h, r, c, headerCol, bodyRow, bodyCol;
 
             for (h = 1; h <= cols; h++) {
-                headerCol = doc.createElement('th');
-                headerCol.innerHTML = '-';
+                headerCol = doc.createElement("th");
+                headerCol.innerHTML = "-";
                 headerRow.appendChild(headerCol);
             }
 
             header.appendChild(headerRow);
 
             for (r = 1; r <= rows; r++) {
-                bodyRow = doc.createElement('tr');
+                bodyRow = doc.createElement("tr");
                 for (c = 1; c <= cols; c++) {
-                    bodyCol = doc.createElement('td');
-                    bodyCol.innerHTML = '-';
+                    bodyCol = doc.createElement("td");
+                    bodyCol.innerHTML = "-";
                     bodyRow.appendChild(bodyCol);
                 }
                 body.appendChild(bodyRow);
@@ -53,6 +53,7 @@ function createTableExtension (MediumEditor) {
             table.appendChild(header);
             table.appendChild(body);
             wrap.appendChild(table);
+            wrap.appendChild(doc.createElement("br"));
 
             return wrap;
         },
@@ -64,16 +65,16 @@ function createTableExtension (MediumEditor) {
             evt.stopPropagation();
 
             if (!this.isDisplayed()) {
-            this.showForm();
+                this.showForm();
             }
 
             return false;
         },
 
         hideForm: function () {
-            this.getColumnsInput().value = '';
-            this.getRowsInput().value = '';
-            this.getForm().style.display = 'none';
+            this.getColumnsInput().value = "";
+            this.getRowsInput().value = "";
+            this.getForm().style.display = "none";
             this.showToolbarDefaultActions();
         },
 
@@ -83,7 +84,7 @@ function createTableExtension (MediumEditor) {
 
             this.base.saveSelection();
             this.hideToolbarDefaultActions();
-            this.getForm().style.display = 'block';
+            this.getForm().style.display = "block";
             this.setToolbarPosition();
 
             colsInput.focus();
@@ -91,58 +92,58 @@ function createTableExtension (MediumEditor) {
 
         createForm: function () {
             var doc = this.base.options.ownerDocument,
-            form = doc.createElement('div'),
-            close = doc.createElement('a'),
-            save = doc.createElement('a'),
-            columnInput = doc.createElement('input'),
-            rowInput = doc.createElement('input');
+            form = doc.createElement("div"),
+            close = doc.createElement("a"),
+            save = doc.createElement("a"),
+            columnInput = doc.createElement("input"),
+            rowInput = doc.createElement("input");
 
-            form.className = 'medium-editor-toolbar-form';
-            form.id = 'medium-editor-toolbar-form-table-' + this.base.id;
+            form.className = "medium-editor-toolbar-form";
+            form.id = "medium-editor-toolbar-form-table-" + this.base.id;
 
             // Handle clicks on the form itself
-            this.base.on(form, 'click', this.handleFormClick.bind(this));
+            this.base.on(form, "click", this.handleFormClick.bind(this));
 
             // Add columns textbox
-            columnInput.setAttribute('type', 'text');
-            columnInput.className = 'medium-editor-toolbar-input medium-editor-toolbar-input-columns';
-            columnInput.setAttribute('placeholder', 'Column Count');
+            columnInput.setAttribute("type", "text");
+            columnInput.className = "medium-editor-toolbar-input medium-editor-toolbar-input-columns";
+            columnInput.setAttribute("placeholder", "Column Count");
             form.appendChild(columnInput);
 
             // Add rows textbox
-            rowInput.setAttribute('type', 'text');
-            rowInput.className = 'medium-editor-toolbar-input medium-editor-toolbar-input-rows';
-            rowInput.setAttribute('placeholder', 'Row Count');
+            rowInput.setAttribute("type", "text");
+            rowInput.className = "medium-editor-toolbar-input medium-editor-toolbar-input-rows";
+            rowInput.setAttribute("placeholder", "Row Count");
             form.appendChild(rowInput);
 
             // Handle typing in the textboxes
-            this.base.on(columnInput, 'keyup', this.handleTextboxKeyup.bind(this));
-            this.base.on(rowInput, 'keyup', this.handleTextboxKeyup.bind(this));
+            this.base.on(columnInput, "keyup", this.handleTextboxKeyup.bind(this));
+            this.base.on(rowInput, "keyup", this.handleTextboxKeyup.bind(this));
 
             // Add save buton
-            save.setAttribute('href', '#');
-            save.className = 'medium-editor-toolbar-save';
-            save.innerHTML = this.base.options.buttonLabels === 'fontawesome' ?
-                '<i class="fa fa-check"></i>' :
-                '&#10003;';
+            save.setAttribute("href", "#");
+            save.className = "medium-editor-toolbar-save";
+            save.innerHTML = this.base.options.buttonLabels === "fontawesome" ?
+                "<i class='fa fa-check'></i>" :
+                "&#10003;";
             form.appendChild(save);
 
             // Handle save button clicks (capture)
-            this.base.on(save, 'click', (...a) => {
+            this.base.on(save, "click", (...a) => {
                 this.handleSaveClick(...a);
                 this.hideForm();
             }, true);
 
             // Add close button
-            close.setAttribute('href', '#');
-            close.className = 'medium-editor-toolbar-close';
-            close.innerHTML = this.base.options.buttonLabels === 'fontawesome' ?
-                '<i class="fa fa-times"></i>' :
-                '&times;';
+            close.setAttribute("href", "#");
+            close.className = "medium-editor-toolbar-close";
+            close.innerHTML = this.base.options.buttonLabels === "fontawesome" ?
+                "<i class='fa fa-times'></i>" :
+                "&times;";
             form.appendChild(close);
 
             // Handle close button clicks
-            this.base.on(close, 'click', (...a) => {
+            this.base.on(close, "click", (...a) => {
                 this.handleCloseClick(...a);
                 this.hideForm();
             });
@@ -151,11 +152,11 @@ function createTableExtension (MediumEditor) {
         },
 
         getColumnsInput: function () {
-            return this.getForm().querySelector('input.medium-editor-toolbar-input-columns');
+            return this.getForm().querySelector("input.medium-editor-toolbar-input-columns");
         },
 
         getRowsInput: function () {
-            return this.getForm().querySelector('input.medium-editor-toolbar-input-rows');
+            return this.getForm().querySelector("input.medium-editor-toolbar-input-rows");
         }
     });
 }
